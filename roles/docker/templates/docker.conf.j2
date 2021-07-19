@@ -1,0 +1,6 @@
+[Service]
+Environment="HTTP_PROXY={{ docker_proxy.http }}" "HTTPS_PROXY={{ docker_proxy.https }}" "NO_PROXY={{ docker_proxy.no_proxy }}"
+ExecStart=
+ExecStart=/usr/bin/dockerd -H fd:// --live-restore
+Restart=always
+RestartSec=3

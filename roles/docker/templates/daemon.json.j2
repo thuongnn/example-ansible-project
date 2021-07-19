@@ -1,0 +1,7 @@
+{
+    "insecure-registries": [
+        {% if registry.insecure and registry.url|trim != "" %}
+        "{{ registry.url }}"
+        {% endif %}
+    ]
+}

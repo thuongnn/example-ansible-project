@@ -1,0 +1,8 @@
+#ignore server auth config
+inventory/hosts.ini
+
+#igonre all log files
+logs/**.log
+
+#other file
+.DS_Store

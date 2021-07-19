@@ -1,0 +1,24 @@
+---
+- name: Gather facts
+  hosts: all
+  gather_facts: true
+  any_errors_fatal: true
+  become: true
+  tasks:
+    - set_fact:
+        playbook_action: install
+  tags:
+    - always
+
+- name: Installing Docker
+  hosts: cloud_servers
+  any_errors_fatal: true
+  become: true
+  gather_facts: false
+  roles:
+    - docker
+  vars:
+    docker_proxy_enable: false
+    docker_registry_insecure: false
+  tags:
+    - docker

@@ -1,0 +1,13 @@
+---
+compose:
+  path: "/usr/local/bin"
+docker_proxy:
+  enable: "{{ docker_proxy_enable | default('false', true) }}"
+  http: "{{ docker_proxy_http | default('', true) }}"
+  https: "{{ docker_proxy_https | default('', true) }}"
+  no_proxy: "{{ docker_proxy_no_proxy | default('', true) }}"
+registry:
+  username: "{{ docker_registry_username | default('', true) }}"
+  password: "{{ docker_registry_password | default('', true) }}"
+  url: "{{ docker_registry_url | default('', true) }}"
+  insecure: "{{ docker_registry_insecure | default(true, true) }}"

@@ -1,0 +1,68 @@
+---
+- name: Setup docker proxy
+  become: true
+  block:
+    - name: create docker.service.d folder
+      file:
+        path: /etc/systemd/system/docker.service.d
+        state: directory
+        mode: 644
+    - name: create docker.conf file
+      template:
+        src: docker.conf.j2
+        dest: /etc/systemd/system/docker.service.d/docker.conf
+        mode: "0644"
+        force: no
+      register: docker_proxy_setting_output
+  when: docker_proxy.enable|bool
+
+- name: reload docker
+  become: true
+  service:
+    name: docker
+    daemon_reload: yes
+    state: restarted
+  when: docker_proxy_setting_output.changed|bool
+
+- block:
+    - name: Check if docker config file exists
+      stat:
+        path: "/root/.docker/config.json"
+      register: docker_config_file_stat
+
+    - name: Ensure Docker config folder exists
+      file:
+        path: "/root/.docker"
+        state: directory
+      when: not docker_config_file_stat.stat.exists | bool
+
+    - name: Ensure Docker config file exists
+      template:
+        src: "docker-config.json.j2"
+        dest: "/root/.docker/config.json"
+        mode: "0400"
+      when: not docker_config_file_stat.stat.exists | bool
+
+- block:
+    - name: Create daemon.json file
+      become: true
+      template:
+        src: daemon.json.j2
+        dest: /etc/docker/daemon.json
+        force: no
+      register: docker_daemon_setting_output
+    - name: reload docker
+      become: true
+      service:
+        name: docker
+        daemon_reload: yes
+        state: restarted
+      when: docker_daemon_setting_output.changed|bool
+  when: registry.insecure | bool
+
+- name: Login to docker
+  shell: "docker login -u {{ registry.username }} -p {{ registry.password }} {{ registry.url }}"
+  when:
+    - registry.username is defined and registry.username|trim != ""
+    - registry.password is defined and registry.password|trim != ""
+    - registry.url is defined and registry.url|trim != ""

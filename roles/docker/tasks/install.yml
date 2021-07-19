@@ -1,0 +1,63 @@
+---
+################# PREREQUISTES ######################
+- name: Check if docker is installed
+  shell: dpkg-query -W "docker" "docker-engine" "docker.io" "containerd" "runc"
+  failed_when: false
+  register: has_docker
+
+################# INSTALL DOCKER ENGINE ######################
+
+- name: Copy required files to remote server
+  copy:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: "0755"
+  with_items:
+    - { src: "{{ role_path }}/files/docker-ce-cli.deb", dest: "/tmp/docker-ce-cli.deb" }
+    - { src: "{{ role_path }}/files/containerd.deb", dest: "/tmp/containerd.deb" }
+    - { src: "{{ role_path }}/files/docker-ce.deb", dest: "/tmp/docker-ce.deb" }
+  when: has_docker.rc != 0
+
+- name: Install Docker Engine
+  shell: dpkg -i {{ item }}
+  with_items:
+    - "/tmp/docker-ce-cli.deb"
+    - "/tmp/containerd.deb"
+    - "/tmp/docker-ce.deb"
+  when: has_docker.rc != 0
+
+- name: Ensure Docker is installed
+  shell: dpkg-query -W docker-ce docker-ce-cli containerd.io
+  when: has_docker.rc != 0
+
+- name: Ensure Docker is started and enabled at boot.
+  service:
+    name: docker
+    state: started
+    enabled: true
+  when: has_docker.rc != 0
+
+- name: Ensure handlers are notified now to avoid firewall conflicts.
+  meta: flush_handlers
+
+################# INSTALL DOCKER COMPOSE ######################
+- name: Check if docker-compose is installed
+  shell: which docker-compose
+  failed_when: false
+  register: has_docker_compose
+
+- block:
+    - name: Ensure Docker Compose directory exists
+      file:
+        path: "{{ compose.path }}"
+        state: "directory"
+
+    - name: Install Docker Compose
+      copy:
+        src: "{{ role_path }}/files/docker-compose"
+        dest: "{{ compose.path }}/docker-compose"
+        mode: '0755'
+  when:
+    - has_docker_compose.rc|int != 0
+
+- include_tasks: post-install.yml
