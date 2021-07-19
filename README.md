@@ -34,7 +34,7 @@ Ví dụ trong thư mục playbooks có tệp playbook là `docker.yml`, để c
 ```
 Nếu playbook không hợp lệ hay không tồn tại sẽ hiển thị lỗi như dưới đây:
 ```bash
-$ ./install.sh nginx
+./install.sh nginx
 ---
 Error: playbook-name does not exist! check again in playbooks folder.
 Example:
