@@ -10,7 +10,10 @@ Kịch bản chạy Ansible
     ```text
     ./roles/<role_sử_dụng>/defaults/main.yml
     ```
-  **Ví dụ**: _/roles/docker/defaults/main.yml_
+  **Ví dụ**:
+    ```text
+    /roles/docker/defaults/main.yml
+    ```
 - Ví dụ playbook cho cài đặt docker thông thường (sử dụng roles docker trong thư mục roles):
     ```yaml
     ---

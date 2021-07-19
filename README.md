@@ -1,6 +1,6 @@
 Example ansible project
 ---
-###Cấu hình inventory
+### Cấu hình inventory
 - Khởi tạo tệp `hosts.ini` với nội dung trong tệp mẫu `hosts.ini.template` bằng lệnh sau:
     ```bash
     make init
@@ -19,10 +19,11 @@ Example ansible project
     ansible_become_password=<password of root user>
     ansible_become_method=su
     ```
-###Đọc hướng dẫn (README.md) trong thư mục logs và playbooks
+### Đọc hướng dẫn (README.md) trong thư mục logs và playbooks
 - [Thư mục logs](./logs/README.md)  
 - [Thư mục playbooks](./playbooks/README.md)
-###Chạy ansible playbooks
+
+### Chạy ansible playbooks
 ```bash
 chmod +x ./install.sh
 ./install.sh "<<playbook_name>>"
